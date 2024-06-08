@@ -6,11 +6,11 @@ def Solve(maze: Maze):
     maze.solve()
 
 def main():
-    window: Window = Window(800, 600)
+    window: Window = Window(820, 620)
     maze: Maze = Maze(
             Point(10,10),
-            11, 15,
-            50, 50,
+            30, 40,
+            20, 20,
             window
            )
     Solve(maze)
