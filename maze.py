@@ -111,26 +111,26 @@ class Maze:
     def _get_valid_move_directions(self, row: int, column:int) -> list[list[int, int]]:
         ret: list[list[int, int]] = []
         walls: dict[str, bool] = self._cells[row][column].walls
-        if( not walls["top"] 
-            and row > 0
-            and not self._cells[row-1][column].visited
-        ): 
-            ret.append([row-1, column])
         if( not walls["bottom"] 
             and row < self.num_rows-1 
             and not self._cells[row+1][column].visited
         ): 
             ret.append([row+1, column])
-        if( not walls["left"] 
-            and column > 0 
-            and not self._cells[row][column-1].visited
+        if( not walls["top"] 
+            and row > 0
+            and not self._cells[row-1][column].visited
         ): 
-            ret.append([row, column-1])
+            ret.append([row-1, column])
         if( not  walls["right"] 
             and column < self.num_columns-1 
             and not self._cells[row][column+1].visited
         ): 
             ret.append([row, column+1])
+        if( not walls["left"] 
+            and column > 0 
+            and not self._cells[row][column-1].visited
+        ): 
+            ret.append([row, column-1])
         return ret
 
     def _solve_r(self, row: int, column: int) -> bool:
