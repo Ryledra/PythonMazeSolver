@@ -21,9 +21,9 @@ class Line:
 
     def draw(self, canvas, fill_color: str):
         canvas.create_line(
-                self.start.x, self.start.y,
-                self.end.x, self.end.y,
-                fill=fill_color, width=2
+            self.start.x, self.start.y,
+            self.end.x, self.end.y,
+            fill=fill_color, width=2
         )
     
     def __eq__(self, other) -> bool:
@@ -37,11 +37,11 @@ class Cell:
         # walls = {left: T/F, right:T/F, top: T/F, bottom: T/f}
         if walls is None:
             walls = {
-                     "left":  True,
-                     "right": True,
-                     "top":   True,
-                     "bottom":True
-                     }
+                    "left":  True,
+                    "right": True,
+                    "top":   True,
+                    "bottom":True
+                    }
         self.walls = walls
         p1: Point
         p2: Point

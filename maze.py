@@ -4,13 +4,14 @@ from time import sleep
 import random
 
 class Maze:
-    def __init__(self, top_corner: Point, num_rows: int, num_columns: int, cell_size_x: int, cell_size_y: int, window: Window, seed=None):
+    def __init__(self, top_corner: Point, num_rows: int, num_columns: int, 
+    cell_size_x: int, cell_size_y: int, window: Window, seed=None):
         if seed is not None: random.seed(seed)
         self.top_corner: Point = top_corner
         self.num_rows, self.num_columns = num_rows, num_columns
         self.cell_size_x, self.cell_size_y = cell_size_x, cell_size_y
         self.window = window
-        self._cells: list(Cell) = []
+        self._cells: list(list(Cell)) = []
         self._create_cells()
         self._break_entrance_exit()
         self._break_walls_r(0, 0)
@@ -22,15 +23,16 @@ class Maze:
             row = []
             for x in range(self.num_columns):
                 row.append(
-                        Cell(self.window, 
-                            Point(
-                                self.top_corner.x + x * self.cell_size_x,
-                                self.top_corner.y + y * self.cell_size_y
-                            ), Point(
-                                self.top_corner.x + (x+1) * self.cell_size_x,
-                                self.top_corner.y + (y+1) * self.cell_size_y
-                            )
+                    Cell(
+                        self.window, 
+                        Point(
+                            self.top_corner.x + x * self.cell_size_x,
+                            self.top_corner.y + y * self.cell_size_y
+                        ), Point(
+                            self.top_corner.x + (x+1) * self.cell_size_x,
+                            self.top_corner.y + (y+1) * self.cell_size_y
                         )
+                    )
                 )
             #print(row)
             self._cells.append(row)
@@ -52,8 +54,10 @@ class Maze:
         sleep(0.05)
 
     def _break_entrance_exit(self):
-        self._cells[0][0].walls["top"] = False
-        self._cells[self.num_rows-1][self.num_columns-1].walls["bottom"] = False
+        self.start_column = random.randint(0, self.num_columns - 1)
+        self._cells[0][self.start_column].walls["top"] = False
+        self.end_column = random.randint(0, self.num_columns - 1)
+        self._cells[self.num_rows-1][self.end_column].walls["bottom"] = False
 
     def _get_valid_break_directions(self, row:int, column: int) -> list[list[int, int]]:
         ret: list[list[int, int]] = []
@@ -104,7 +108,7 @@ class Maze:
 
     def solve(self):
         print("starting to solve...")
-        if self._solve_r(0, 0):
+        if self._solve_r(0, self.start_column):
             print("maze solved")
         else: print("No solution found")
 
@@ -121,7 +125,7 @@ class Maze:
             and not self._cells[row-1][column].visited
         ): 
             ret.append([row-1, column])
-        if( not  walls["right"] 
+        if( not walls["right"] 
             and column < self.num_columns-1 
             and not self._cells[row][column+1].visited
         ): 
@@ -135,18 +139,18 @@ class Maze:
 
     def _solve_r(self, row: int, column: int) -> bool:
         self._animate()
-        if row == self.num_rows - 1 and column == self.num_columns - 1:
+        if row == self.num_rows - 1 and column == self.end_column:
             return True
         currentCell: Cell = self._cells[row][column]
         currentCell.visited = True
         valid_directions: list[list[int, int]] = self._get_valid_move_directions(row, column)
-        print(f"at cell ({row, column})", valid_directions)
+        # print(f"at cell ({row, column})", valid_directions)
         #if len(valid_directions) == 0: return False
         for direction in valid_directions:
-            print(f"\ttrying to move to ({direction[0], direction[1]})")
+            # print(f"\ttrying to move to ({direction[0], direction[1]})")
             currentCell.draw_move(self._cells[direction[0]][direction[1]])
             if self._solve_r(direction[0], direction[1]):
                 return True
             currentCell.draw_move(self._cells[direction[0]][direction[1]], True)
-        print(f"\tno valid moves")
+        # print(f"\tno valid moves")
         return False
